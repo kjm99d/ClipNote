@@ -64,6 +64,7 @@ CClipNoteDlg::CClipNoteDlg(CWnd* pParent /*=nullptr*/)
 void CClipNoteDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST1, m_listCtrl);
 }
 
 char* CClipNoteDlg::CopyClipboardToText()
@@ -104,10 +105,19 @@ BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_WM_CHANGECBCHAIN()
 	ON_WM_DRAWCLIPBOARD()
+	ON_BN_CLICKED(IDC_BUTTON2, &CClipNoteDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
 // CClipNoteDlg 메시지 처리기
+
+void CClipNoteDlg::SetupListCtrl()
+{
+	// List Control 초기화 및 스타일 설정
+	//m_listCtrl.Create(WS_VISIBLE | WS_CHILD | LVS_REPORT, CRect(10, 10, 300, 200), this, IDC_LIST1);
+	m_listCtrl.InsertColumn(0, _T("Column 1"), LVCFMT_LEFT, 100);
+	m_listCtrl.InsertColumn(1, _T("Column 2"), LVCFMT_LEFT, 100);
+}
 
 BOOL CClipNoteDlg::OnInitDialog()
 {
@@ -140,8 +150,18 @@ BOOL CClipNoteDlg::OnInitDialog()
 
 	//m_procedure.SetHook();
 	mh_next_chain = SetClipboardViewer();
+//	SetupListCtrl();
+#if 0
+	CRect rect;
+	m_listCtrl.GetClientRect(&rect);
+	
+	m_listCtrl.InsertColumn(1, _T("B"), LVCFMT_LEFT, rect.Width() - 300);
+#endif
+	//m_listCtrl.InsertColumn(0, _T("클립보드 내용"), LVCFMT_LEFT, 300);
+	m_listCtrl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 
-	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
+
+	return TRUE;  // 포커스를  컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
 void CClipNoteDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -238,9 +258,18 @@ void CClipNoteDlg::OnDrawClipboard()
 	if (m_stop_flag == 0) {
 		// 클립보드에서 문자열을 가져온다.
 		char* p_string = CopyClipboardToText();
+		CString cs(p_string);
 		if (NULL != p_string) 
 		{
-			OutputDebugStringA(p_string);
+
+			m_listCtrl.InsertItem(0, cs);
+			
 		}
 	}
+}
+
+void CClipNoteDlg::OnBnClickedButton2()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_listCtrl.DeleteAllItems();
 }

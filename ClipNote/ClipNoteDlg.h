@@ -28,6 +28,10 @@ private:
 	HWND mh_next_chain;
 	char m_stop_flag;
 
+private:
+	CListCtrl m_listCtrl;
+	void SetupListCtrl();
+
 // 구현입니다.
 protected:
 	HICON m_hIcon;
@@ -45,4 +49,5 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnChangeCbChain(HWND hWndRemove, HWND hWndAfter);
 	afx_msg void OnDrawClipboard();
+	afx_msg void OnBnClickedButton2();
 };
