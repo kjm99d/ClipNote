@@ -1,4 +1,4 @@
-﻿
+
 // ClipNoteDlg.cpp: 구현 파일
 //
 
@@ -7,6 +7,9 @@
 #include "ClipNote.h"
 #include "ClipNoteDlg.h"
 #include "afxdialogex.h"
+
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -54,6 +57,8 @@ CClipNoteDlg::CClipNoteDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CLIPNOTE_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	m_stop_flag = 0;
 }
 
 void CClipNoteDlg::DoDataExchange(CDataExchange* pDX)
@@ -61,10 +66,44 @@ void CClipNoteDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 }
 
+char* CClipNoteDlg::CopyClipboardToText()
+{
+	unsigned int priority_list = CF_TEXT;
+	char* p_string = NULL;
+	// 클립보드에는 문자열만 저장할수 있는것이 아니기 때문에 
+	// 현재 문자열이 저장되어 있는지 확인한다.
+	if (::GetPriorityClipboardFormat(&priority_list, 1) == CF_TEXT) {
+		// 클립보드에 있는 비트맵 정보를 얻기 위해서 클립보드를 연다.
+		if (::OpenClipboard(m_hWnd)) {
+			// 클립보드에서 문자열이 저장된 메모리의 핸들 값을 얻는다.
+			HANDLE h_clipboard_data = ::GetClipboardData(CF_TEXT);
+			if (h_clipboard_data != NULL) {
+				// 메모리 핸들 값을 이용하여 실제 사용가능한 주소를 얻는다.
+				char* p_clipboard_data = (char*)::GlobalLock(h_clipboard_data);
+				// 클립보드에 저장된 문자열의 길이를 구한다. ('\0'포함 크기)
+				int string_len = strlen(p_clipboard_data) + 1;
+				// 클립보드에 저장된 문자열을 저장하기 위해 메모리를 할당한다.
+				p_string = new char[string_len];
+				// 할당된 메모리에 클리보드 문자열을 복사한다.
+				memcpy(p_string, p_clipboard_data, string_len);
+				// 문자열을 복사하기 위해서 Lock했던 메모리를 해제한다.
+				::GlobalUnlock(h_clipboard_data);
+			}
+			// 클립보드를 닫는다.
+			::CloseClipboard();
+		}
+	}
+	// 클립보드 문자열을 복사한 메모리의 주소를 반환한다.
+	return p_string;
+}
+
 BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_DESTROY()
+	ON_WM_CHANGECBCHAIN()
+	ON_WM_DRAWCLIPBOARD()
 END_MESSAGE_MAP()
 
 
@@ -99,7 +138,8 @@ BOOL CClipNoteDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	//m_procedure.SetHook();
+	mh_next_chain = SetClipboardViewer();
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -153,3 +193,54 @@ HCURSOR CClipNoteDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CClipNoteDlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	if (mh_next_chain != NULL)
+	{
+		ChangeClipboardChain(mh_next_chain);
+		mh_next_chain = NULL;
+	}
+}
+
+
+void CClipNoteDlg::OnChangeCbChain(HWND hWndRemove, HWND hWndAfter)
+{
+	CDialogEx::OnChangeCbChain(hWndRemove, hWndAfter);
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+
+
+	// 자신 다음에 있던 윈도우가 종료되었으면 종료된 윈도우의 다음 윈도우의 핸들을 받아서 
+	// 자신의 다음 윈도우로 보관한다.
+	if (hWndRemove == mh_next_chain) 
+		mh_next_chain = (HWND)hWndAfter;
+	else if (mh_next_chain != NULL)
+	{
+		// 자신의 다음 윈도우가 종료된 것이 아니라면 이 메세지를 자신의 다음 윈도우로 전송한다.
+		::SendMessage(mh_next_chain, WM_CHANGECBCHAIN, (WPARAM)hWndRemove, (LPARAM)hWndAfter);
+	}
+
+}
+
+
+void CClipNoteDlg::OnDrawClipboard()
+{
+	CDialogEx::OnDrawClipboard();
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+		// 자신의 프로그램에서 클립보드를 사용해도 WM_DRAWCLIPBOARD 메시지가 발생하기
+	// 때문에 m_stop_flag 변수를 추가하여 이 변수값이 0인 경우에만 클립보드를 체크하도록 함.
+	if (m_stop_flag == 0) {
+		// 클립보드에서 문자열을 가져온다.
+		char* p_string = CopyClipboardToText();
+		if (NULL != p_string) 
+		{
+			OutputDebugStringA(p_string);
+		}
+	}
+}

@@ -1,9 +1,9 @@
-﻿
+
 // ClipNoteDlg.h: 헤더 파일
 //
 
 #pragma once
-
+#include "HookProcedure.h"
 
 // CClipNoteDlg 대화 상자
 class CClipNoteDlg : public CDialogEx
@@ -20,6 +20,13 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
 
+public:
+	char * CopyClipboardToText();
+
+private:
+	HookProcedure m_procedure;
+	HWND mh_next_chain;
+	char m_stop_flag;
 
 // 구현입니다.
 protected:
@@ -31,4 +38,11 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+
+
+public:
+	afx_msg void OnDestroy();
+	afx_msg void OnChangeCbChain(HWND hWndRemove, HWND hWndAfter);
+	afx_msg void OnDrawClipboard();
 };
