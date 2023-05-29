@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClipNote.h">
+    <ClInclude Include="ClipNoteEnv.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ClipNoteDlg.h">
+    <ClInclude Include="ClipNoteEnvDlg.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -35,10 +35,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClipNote.cpp">
+    <ClCompile Include="ClipNoteEnv.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ClipNoteDlg.cpp">
+    <ClCompile Include="ClipNoteEnvDlg.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -46,17 +46,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="ClipNote.rc">
+    <ResourceCompile Include="ClipNoteEnv.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\ClipNote.rc2">
+    <None Include="res\ClipNoteEnv.rc2">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\ClipNote.ico">
+    <Image Include="res\ClipNoteEnv.ico">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

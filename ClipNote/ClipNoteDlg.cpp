@@ -9,8 +9,6 @@
 #include "afxdialogex.h"
 
 
-
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -58,7 +56,6 @@ CClipNoteDlg::CClipNoteDlg(CWnd* pParent /*=nullptr*/)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-	m_stop_flag = 0;
 }
 
 void CClipNoteDlg::DoDataExchange(CDataExchange* pDX)
@@ -148,9 +145,7 @@ BOOL CClipNoteDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	//m_procedure.SetHook();
 	mh_next_chain = SetClipboardViewer();
-//	SetupListCtrl();
 #if 0
 	CRect rect;
 	m_listCtrl.GetClientRect(&rect);
@@ -252,20 +247,23 @@ void CClipNoteDlg::OnDrawClipboard()
 {
 	CDialogEx::OnDrawClipboard();
 
-	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-		// 자신의 프로그램에서 클립보드를 사용해도 WM_DRAWCLIPBOARD 메시지가 발생하기
-	// 때문에 m_stop_flag 변수를 추가하여 이 변수값이 0인 경우에만 클립보드를 체크하도록 함.
-	if (m_stop_flag == 0) {
-		// 클립보드에서 문자열을 가져온다.
-		char* p_string = CopyClipboardToText();
-		CString cs(p_string);
-		if (NULL != p_string) 
-		{
-
-			m_listCtrl.InsertItem(0, cs);
-			
-		}
+	static BOOL bIsFirstDraw = TRUE;
+	if (TRUE == bIsFirstDraw)
+	{
+		bIsFirstDraw = FALSE;
+		return void();
 	}
+
+	// 클립보드에서 문자열을 가져온다.
+	char* p_string = CopyClipboardToText();
+	CString cs(p_string);
+	if (NULL != p_string)
+	{
+
+		m_listCtrl.InsertItem(0, cs);
+
+	}
+	
 }
 
 void CClipNoteDlg::OnBnClickedButton2()

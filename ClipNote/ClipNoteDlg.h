@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "HookProcedure.h"
 
 // CClipNoteDlg 대화 상자
 class CClipNoteDlg : public CDialogEx
@@ -24,9 +23,7 @@ public:
 	char * CopyClipboardToText();
 
 private:
-	HookProcedure m_procedure;
 	HWND mh_next_chain;
-	char m_stop_flag;
 
 private:
 	CListCtrl m_listCtrl;
