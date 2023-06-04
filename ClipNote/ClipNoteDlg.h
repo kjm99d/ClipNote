@@ -23,7 +23,15 @@ public:
 	char * CopyClipboardToText();
 
 private:
+	static LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
+	BOOL SetHook();
+	BOOL UnHook();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+private:
 	HWND mh_next_chain;
+
+	static HHOOK m_hHook;
 
 private:
 	CListCtrl m_listCtrl;
@@ -47,4 +55,6 @@ public:
 	afx_msg void OnChangeCbChain(HWND hWndRemove, HWND hWndAfter);
 	afx_msg void OnDrawClipboard();
 	afx_msg void OnBnClickedButton2();
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnClipboardUpdate();
 };

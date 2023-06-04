@@ -49,7 +49,7 @@ END_MESSAGE_MAP()
 
 // CClipNoteDlg 대화 상자
 
-
+HHOOK CClipNoteDlg::m_hHook = NULL;
 
 CClipNoteDlg::CClipNoteDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CLIPNOTE_DIALOG, pParent)
@@ -95,6 +95,63 @@ char* CClipNoteDlg::CopyClipboardToText()
 	return p_string;
 }
 
+LRESULT CClipNoteDlg::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode >= 0)
+	{
+		// 키보드 이벤트가 발생한 경우 처리
+		KBDLLHOOKSTRUCT* pKeyboardStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
+
+		if (wParam == WM_KEYDOWN)
+		{
+			bool alt = HIWORD(GetKeyState(VK_MENU)) != 0;
+			bool control = HIWORD(GetKeyState(VK_CONTROL)) != 0;
+			bool shift = HIWORD(GetKeyState(VK_SHIFT)) != 0;
+			bool system = HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
+
+			// WM_KEYDOWN 이벤트인 경우
+			DWORD vkCode = pKeyboardStruct->vkCode;
+			std::string ss = "Key down: ";
+			if (control && vkCode == 'C')
+			{
+				ss += vkCode;
+				OutputDebugStringA(ss.c_str());
+			}
+		}
+	}
+
+	// 다음 후킹 프로시저로 이벤트를 전달
+	return CallNextHookEx(m_hHook, nCode, wParam, lParam);
+}
+
+
+BOOL CClipNoteDlg::SetHook()
+{
+	m_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, AfxGetInstanceHandle(), NULL);
+
+	if (m_hHook)
+		return TRUE;
+	return FALSE;
+}
+
+BOOL CClipNoteDlg::UnHook()
+{
+	BOOL bKeyboardUnHook = UnhookWindowsHookEx(m_hHook);
+
+	return bKeyboardUnHook;
+}
+
+BOOL CClipNoteDlg::PreTranslateMessage(MSG* pMsg)
+{
+	//OutputDebugString(_T("PreTranslateMessage"));
+
+	const UINT msg = pMsg->message;
+
+	
+
+	return CDialog::PreTranslateMessage(pMsg);
+}
+
 BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
@@ -103,6 +160,8 @@ BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_WM_CHANGECBCHAIN()
 	ON_WM_DRAWCLIPBOARD()
 	ON_BN_CLICKED(IDC_BUTTON2, &CClipNoteDlg::OnBnClickedButton2)
+	ON_WM_KEYDOWN()
+	ON_WM_CLIPBOARDUPDATE()
 END_MESSAGE_MAP()
 
 
@@ -144,6 +203,11 @@ BOOL CClipNoteDlg::OnInitDialog()
 	//  프레임워크가 이 작업을 자동으로 수행합니다.
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
+
+	if (FALSE == SetHook())
+	{
+		OutputDebugString(L"aaa!");
+	}
 
 	mh_next_chain = SetClipboardViewer();
 #if 0
@@ -220,6 +284,9 @@ void CClipNoteDlg::OnDestroy()
 		ChangeClipboardChain(mh_next_chain);
 		mh_next_chain = NULL;
 	}
+
+	if (m_hHook)
+		UnHook();
 }
 
 
@@ -270,4 +337,27 @@ void CClipNoteDlg::OnBnClickedButton2()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_listCtrl.DeleteAllItems();
+}
+
+
+void CClipNoteDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	WCHAR szMsg[1024];
+	SecureZeroMemory(szMsg, sizeof(szMsg));
+	swprintf_s(szMsg, _countof(szMsg), L"nChar[%d] nbRepCnt[%d] nFlags[%d]", nChar, nRepCnt, nFlags);
+	OutputDebugStringW(szMsg);
+
+	CDialogEx::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
+void CClipNoteDlg::OnClipboardUpdate()
+{
+	// 이 기능을 사용하려면 Windows Vista 이상이 있어야 합니다.
+	// _WIN32_WINNT 기호는 0x0600보다 크거나 같아야 합니다.
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	OutputDebugString(_T("OnClipboardUpdate() !!!"));
+
+	CDialogEx::OnClipboardUpdate();
 }
