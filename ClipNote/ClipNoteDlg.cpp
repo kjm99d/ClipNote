@@ -112,10 +112,9 @@ LRESULT CClipNoteDlg::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 			// WM_KEYDOWN 이벤트인 경우
 			DWORD vkCode = pKeyboardStruct->vkCode;
 			std::string ss = "Key down: ";
-			if (control && vkCode == 'C')
+			if (shift && vkCode == 'T')
 			{
-				ss += vkCode;
-				OutputDebugStringA(ss.c_str());
+				::SetForegroundWindow(AfxGetMainWnd()->GetSafeHwnd());
 			}
 		}
 	}
