@@ -8,6 +8,7 @@
 #include "ClipNoteDlg.h"
 #include "afxdialogex.h"
 
+#include "HistoryManager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -84,6 +85,9 @@ char* CClipNoteDlg::CopyClipboardToText()
 				p_string = new char[string_len];
 				// 할당된 메모리에 클리보드 문자열을 복사한다.
 				memcpy(p_string, p_clipboard_data, string_len);
+
+				CHistoryManager::GetInstance()->Write(p_string);
+
 				// 문자열을 복사하기 위해서 Lock했던 메모리를 해제한다.
 				::GlobalUnlock(h_clipboard_data);
 			}
