@@ -1,4 +1,4 @@
-
+﻿
 // ClipNoteDlg.cpp: 구현 파일
 //
 
@@ -219,8 +219,11 @@ BOOL CClipNoteDlg::OnInitDialog()
 	
 	m_listCtrl.InsertColumn(1, _T("B"), LVCFMT_LEFT, rect.Width() - 300);
 #endif
-	//m_listCtrl.InsertColumn(0, _T("클립보드 내용"), LVCFMT_LEFT, 300);
-	m_listCtrl.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
+	m_listCtrl.InsertColumn(0, _T("클립보드 내용"), LVCFMT_CENTER);
+	//m_listCtrl.SetColumnWidth(0, LVSCW_AUTOSIZE);
+	m_listCtrl.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
+
+	m_listCtrl.SetExtendedStyle(LVS_REPORT | LVS_EX_FULLROWSELECT);
 
 
 	return TRUE;  // 포커스를  컨트롤에 설정하지 않으면 TRUE를 반환합니다.
@@ -331,6 +334,7 @@ void CClipNoteDlg::OnDrawClipboard()
 	{
 
 		m_listCtrl.InsertItem(0, cs);
+		m_listCtrl.SetItem(0, 0, LVIF_TEXT, cs, 0, 0, 0, 0);
 
 	}
 	

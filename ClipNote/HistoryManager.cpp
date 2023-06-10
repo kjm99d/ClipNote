@@ -10,7 +10,7 @@ CHistoryManager* CHistoryManager::GetInstance()
     return inst;
 }
 
-BOOL CHistoryManager::Write(char* data)
+BOOL CHistoryManager::Write(const char* data)
 {
     CreateLogDirectory();
 
@@ -25,7 +25,9 @@ BOOL CHistoryManager::Write(char* data)
     }
     OutputDebugStringA(strLogFullPath.c_str());
 
-    out << data << std::endl;
+    std::string strEncode = GetBase64String(data);
+
+    out << strEncode.c_str() << std::endl;
 
     return TRUE;
 }
@@ -68,4 +70,9 @@ std::string CHistoryManager::GetLogPath()
     PathAppendA(szFullPath, "Log\\");
 
     return szFullPath;
+}
+
+std::string CHistoryManager::GetBase64String(const char* data)
+{
+    return base64_encode(reinterpret_cast<const unsigned char*>(data), strlen(data));
 }

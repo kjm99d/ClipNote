@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\lib">
+      <UniqueIdentifier>{724b9e9a-3443-4371-99a0-2d040874b98a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\lib\cpp-base64">
+      <UniqueIdentifier>{bfc0d45b-f295-40d7-b9bb-8f135b8283e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClipNote.h">
@@ -49,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="HistoryManager.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\cpp-base64\base64.cpp">
+      <Filter>소스 파일\lib\cpp-base64</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
