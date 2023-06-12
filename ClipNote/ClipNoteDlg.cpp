@@ -1,4 +1,4 @@
-﻿
+
 // ClipNoteDlg.cpp: 구현 파일
 //
 
@@ -226,6 +226,8 @@ BOOL CClipNoteDlg::OnInitDialog()
 	m_listCtrl.SetExtendedStyle(LVS_REPORT | LVS_EX_FULLROWSELECT);
 
 
+	GetDailyLog();
+
 	return TRUE;  // 포커스를  컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -279,6 +281,19 @@ HCURSOR CClipNoteDlg::OnQueryDragIcon()
 }
 
 
+
+void CClipNoteDlg::GetDailyLog()
+{
+	auto items = CHistoryManager::GetInstance()->GetDailyLog();
+	for (int i = items.size() - 1; i >= 0; --i)
+	{
+		CString cs(items.at(i).c_str());
+
+		m_listCtrl.InsertItem(0, cs);
+		m_listCtrl.SetItem(0, 0, LVIF_TEXT, cs, 0, 0, 0, 0);
+			;
+	}
+}
 
 void CClipNoteDlg::OnDestroy()
 {

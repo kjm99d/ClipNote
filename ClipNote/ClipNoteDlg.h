@@ -48,7 +48,8 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
-
+private:
+	void GetDailyLog();
 
 public:
 	afx_msg void OnDestroy();

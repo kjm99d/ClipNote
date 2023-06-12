@@ -32,6 +32,34 @@ BOOL CHistoryManager::Write(const char* data)
     return TRUE;
 }
 
+std::vector<std::string> CHistoryManager::GetDailyLog()
+{
+    std::vector<std::string> vecItems;
+
+    std::string strLogPath = GetLogPath();
+    std::string strCurrentDate = GetCurrentDate();
+
+    std::string strFullPath = strLogPath + strCurrentDate;
+
+    if (TRUE == PathFileExistsA(strFullPath.c_str()))
+    {
+        std::ifstream input;
+        input.open(strFullPath.c_str());
+
+        if (input)
+        {
+            std::string line;
+
+            // 파일 끝까지 계속 읽음
+            while (std::getline(input, line)) {
+                vecItems.push_back(GetBase64DecodeString(line.c_str()));
+            }
+        }
+    }
+
+    return vecItems;
+}
+
 std::string CHistoryManager::GetCurrentDate()
 {
     time_t timer = time(NULL);
@@ -75,4 +103,10 @@ std::string CHistoryManager::GetLogPath()
 std::string CHistoryManager::GetBase64String(const char* data)
 {
     return base64_encode(reinterpret_cast<const unsigned char*>(data), strlen(data));
+}
+
+std::string CHistoryManager::GetBase64DecodeString(const char* data)
+{
+    std::string decoded = base64_decode(data);
+    return decoded;
 }
