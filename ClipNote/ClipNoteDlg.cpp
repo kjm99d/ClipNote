@@ -63,6 +63,7 @@ void CClipNoteDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, m_listCtrl);
+	DDX_Control(pDX, IDC_STATIC_Preview, m_TextPreview);
 }
 
 char* CClipNoteDlg::CopyClipboardToText()
@@ -165,6 +166,11 @@ BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON2, &CClipNoteDlg::OnBnClickedButton2)
 	ON_WM_KEYDOWN()
 	ON_WM_CLIPBOARDUPDATE()
+	ON_NOTIFY(HDN_ITEMCHANGING, 0, &CClipNoteDlg::OnHdnItemchangingList1)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CClipNoteDlg::OnLvnItemchangedList1)
+	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST1, &CClipNoteDlg::OnLvnItemActivateList1)
+	ON_NOTIFY(NM_SETFOCUS, IDC_LIST1, &CClipNoteDlg::OnNMSetfocusList1)
+	ON_NOTIFY(NM_CLICK, IDC_LIST1, &CClipNoteDlg::OnNMClickList1)
 END_MESSAGE_MAP()
 
 
@@ -291,7 +297,6 @@ void CClipNoteDlg::GetDailyLog()
 
 		m_listCtrl.InsertItem(0, cs);
 		m_listCtrl.SetItem(0, 0, LVIF_TEXT, cs, 0, 0, 0, 0);
-			;
 	}
 }
 
@@ -382,4 +387,63 @@ void CClipNoteDlg::OnClipboardUpdate()
 	OutputDebugString(_T("OnClipboardUpdate() !!!"));
 
 	CDialogEx::OnClipboardUpdate();
+}
+
+
+void CClipNoteDlg::OnHdnItemchangingList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+}
+
+
+void CClipNoteDlg::OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	// 선택한 항목의 상태가 변경된 경우
+	if ((pNMLV->uChanged & LVIF_STATE) && (pNMLV->uNewState & LVIS_SELECTED))
+	{
+		// 현재 선택된 항목을 가져옴
+		int nItem = pNMLV->iItem;
+
+		// 선택된 항목의 값이 변경된 경우
+		if ((pNMLV->uOldState & LVIS_SELECTED) != (pNMLV->uNewState & LVIS_SELECTED))
+		{
+			// 선택된 항목의 값을 가져옴
+			CString strSelectedValue = m_listCtrl.GetItemText(nItem, 0);
+
+			// 처리할 내용 작성
+			m_TextPreview.SetWindowTextW(strSelectedValue);
+		}
+	}
+
+	*pResult = 0;
+}
+
+
+void CClipNoteDlg::OnLvnItemActivateList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+}
+
+
+void CClipNoteDlg::OnNMSetfocusList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	*pResult = 0;
+}
+
+
+void CClipNoteDlg::OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	*pResult = 0;
 }

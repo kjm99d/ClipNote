@@ -58,4 +58,10 @@ public:
 	afx_msg void OnBnClickedButton2();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnClipboardUpdate();
+	CStatic m_TextPreview;
+	afx_msg void OnHdnItemchangingList1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnItemActivateList1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMSetfocusList1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult);
 };
