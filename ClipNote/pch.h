@@ -13,6 +13,7 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
+#include <Windows.h>
 
 
 #include "base64.h"

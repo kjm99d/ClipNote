@@ -14,6 +14,7 @@
 #define new DEBUG_NEW
 #endif
 
+//static int m_stop_flag = 0;
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -145,16 +146,6 @@ BOOL CClipNoteDlg::UnHook()
 	return bKeyboardUnHook;
 }
 
-BOOL CClipNoteDlg::PreTranslateMessage(MSG* pMsg)
-{
-	//OutputDebugString(_T("PreTranslateMessage"));
-
-	const UINT msg = pMsg->message;
-
-	
-
-	return CDialog::PreTranslateMessage(pMsg);
-}
 
 BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
@@ -166,11 +157,7 @@ BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON2, &CClipNoteDlg::OnBnClickedButton2)
 	ON_WM_KEYDOWN()
 	ON_WM_CLIPBOARDUPDATE()
-	ON_NOTIFY(HDN_ITEMCHANGING, 0, &CClipNoteDlg::OnHdnItemchangingList1)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CClipNoteDlg::OnLvnItemchangedList1)
-	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST1, &CClipNoteDlg::OnLvnItemActivateList1)
-	ON_NOTIFY(NM_SETFOCUS, IDC_LIST1, &CClipNoteDlg::OnNMSetfocusList1)
-	ON_NOTIFY(NM_CLICK, IDC_LIST1, &CClipNoteDlg::OnNMClickList1)
 END_MESSAGE_MAP()
 
 
@@ -340,12 +327,17 @@ void CClipNoteDlg::OnDrawClipboard()
 {
 	CDialogEx::OnDrawClipboard();
 
+	//if (m_stop_flag == 0) return void();
+
 	static BOOL bIsFirstDraw = TRUE;
 	if (TRUE == bIsFirstDraw)
 	{
 		bIsFirstDraw = FALSE;
 		return void();
 	}
+
+	if (::GetActiveWindow() == m_hWnd)
+		return void();
 
 	// 클립보드에서 문자열을 가져온다.
 	char* p_string = CopyClipboardToText();
@@ -390,14 +382,6 @@ void CClipNoteDlg::OnClipboardUpdate()
 }
 
 
-void CClipNoteDlg::OnHdnItemchangingList1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	*pResult = 0;
-}
-
-
 void CClipNoteDlg::OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
@@ -417,33 +401,28 @@ void CClipNoteDlg::OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult)
 
 			// 처리할 내용 작성
 			m_TextPreview.SetWindowTextW(strSelectedValue);
+
+			const int nSize = (strSelectedValue.GetLength() +1) * sizeof(WCHAR);
+			HANDLE hMem = GlobalAlloc(GMEM_DDESHARE, nSize); // 설마 NULL도 2바이라고 이거 +1은 안되는거야 ?
+
+			WCHAR* p_clipboard_data = (WCHAR*)::GlobalLock(hMem);
+
+			memcpy_s(p_clipboard_data, nSize, strSelectedValue.GetBuffer(), nSize);
+			::GlobalUnlock(p_clipboard_data);
+
+			if (TRUE == OpenClipboard())
+			{
+				EmptyClipboard();
+				HANDLE hClip = SetClipboardData(CF_UNICODETEXT, hMem);
+				if (hClip)
+					OutputDebugString(L"Success ! \n");
+
+				CloseClipboard();
+			}
+
+			//GlobalFree(hMem);
 		}
 	}
-
-	*pResult = 0;
-}
-
-
-void CClipNoteDlg::OnLvnItemActivateList1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	*pResult = 0;
-}
-
-
-void CClipNoteDlg::OnNMSetfocusList1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-	*pResult = 0;
-}
-
-
-void CClipNoteDlg::OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
 	*pResult = 0;
 }

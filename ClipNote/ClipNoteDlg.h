@@ -26,7 +26,6 @@ private:
 	static LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 	BOOL SetHook();
 	BOOL UnHook();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 private:
 	HWND mh_next_chain;
@@ -61,7 +60,4 @@ public:
 	CStatic m_TextPreview;
 	afx_msg void OnHdnItemchangingList1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnLvnItemActivateList1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNMSetfocusList1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNMClickList1(NMHDR* pNMHDR, LRESULT* pResult);
 };
