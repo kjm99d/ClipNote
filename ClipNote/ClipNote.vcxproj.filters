@@ -42,6 +42,12 @@
     <ClInclude Include="HistoryManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="TrayIconMngr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="WM_MSG_ID.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipNote.cpp">
@@ -58,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\cpp-base64\base64.cpp">
       <Filter>소스 파일\lib\cpp-base64</Filter>
+    </ClCompile>
+    <ClCompile Include="TrayIconMngr.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

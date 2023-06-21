@@ -9,6 +9,7 @@
 #include "afxdialogex.h"
 
 #include "HistoryManager.h"
+#include "TrayIconMngr.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -57,6 +58,8 @@ CClipNoteDlg::CClipNoteDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CLIPNOTE_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	m_pTray = std::make_unique<CTrayIconMngr>(pParent);
 
 }
 
@@ -158,6 +161,7 @@ BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_WM_KEYDOWN()
 	ON_WM_CLIPBOARDUPDATE()
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CClipNoteDlg::OnLvnItemchangedList1)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -300,6 +304,9 @@ void CClipNoteDlg::OnDestroy()
 
 	if (m_hHook)
 		UnHook();
+
+	if (m_pTray.get())
+		m_pTray->Destroy();
 }
 
 
@@ -425,4 +432,16 @@ void CClipNoteDlg::OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 
 	*pResult = 0;
+}
+
+int CClipNoteDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
+	if (m_pTray)
+		m_pTray->Create();
+
+	return 0;
 }

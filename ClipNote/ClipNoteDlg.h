@@ -3,6 +3,8 @@
 //
 
 #pragma once
+#include "TrayIconMngr.h"
+#include <memory>
 
 // CClipNoteDlg 대화 상자
 class CClipNoteDlg : public CDialogEx
@@ -32,6 +34,8 @@ private:
 
 	static HHOOK m_hHook;
 
+	std::unique_ptr<CTrayIconMngr> m_pTray;
+
 private:
 	CListCtrl m_listCtrl;
 	void SetupListCtrl();
@@ -60,4 +64,5 @@ public:
 	CStatic m_TextPreview;
 	afx_msg void OnHdnItemchangingList1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
