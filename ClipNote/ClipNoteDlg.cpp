@@ -10,6 +10,7 @@
 
 #include "HistoryManager.h"
 #include "TrayIconMngr.h"
+#include "WM_MSG_ID.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -162,6 +163,7 @@ BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_WM_CLIPBOARDUPDATE()
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CClipNoteDlg::OnLvnItemchangedList1)
 	ON_WM_CREATE()
+	ON_MESSAGE(WM_TRAY_ICON, &CTrayIconMngr::OnTrayIcon)
 END_MESSAGE_MAP()
 
 

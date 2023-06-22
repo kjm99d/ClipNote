@@ -10,8 +10,8 @@ public:
 	BOOL Destroy();
 
 public:
-	afx_msg LRESULT OnTrayIcon(WPARAM wParam, LPARAM lParam);
-	DECLARE_MESSAGE_MAP()
+	LRESULT OnTrayIcon(WPARAM wParam, LPARAM lParam);
+	
 
 private:
 	NOTIFYICONDATA m_nid;
