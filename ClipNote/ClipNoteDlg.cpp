@@ -164,6 +164,8 @@ BEGIN_MESSAGE_MAP(CClipNoteDlg, CDialogEx)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST1, &CClipNoteDlg::OnLvnItemchangedList1)
 	ON_WM_CREATE()
 	ON_MESSAGE(WM_TRAY_ICON, &CTrayIconMngr::OnTrayIcon)
+	ON_COMMAND(ID_TRAY_EXIT, &CTrayIconMngr::OnTrayExit)
+	ON_COMMAND(ID_ENV_TOOL, &CTrayIconMngr::OnTrayEnv)
 END_MESSAGE_MAP()
 
 

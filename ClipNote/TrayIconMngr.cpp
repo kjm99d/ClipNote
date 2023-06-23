@@ -3,11 +3,7 @@
 #include "resource.h"
 #include "WM_MSG_ID.h"
 
-#if 0
-BEGIN_MESSAGE_MAP(CTrayIconMngr, CWnd)
-    ON_MESSAGE(WM_TRAY_ICON, OnTrayIcon)
-END_MESSAGE_MAP()
-#endif
+
 CTrayIconMngr::CTrayIconMngr(CWnd * parent) 
     : CDialogEx(IDD_CLIPNOTE_DIALOG, parent)
 {
@@ -63,10 +59,10 @@ LRESULT CTrayIconMngr::OnTrayIcon(WPARAM wParam, LPARAM lParam)
         AfxGetMainWnd()->ShowWindow(SW_SHOW);
         AfxGetMainWnd()->SetForegroundWindow();
     }
-        break;
+    break;
 
 
-    case WM_COMMAND:
+    default:
     {
         switch (LOWORD(wParam))
         {
@@ -84,7 +80,24 @@ LRESULT CTrayIconMngr::OnTrayIcon(WPARAM wParam, LPARAM lParam)
         }
     }
     break;
-    }
+
+    } // end
+
 
     return 0;
 }
+
+void CTrayIconMngr::OnTrayExit()
+{
+    if (MessageBox(_T("정말 종료하시겠습니까?"), _T("종료"), MB_YESNO | MB_ICONQUESTION) == IDYES)
+    {
+        PostMessage(WM_CLOSE);
+    }
+    
+}
+
+void CTrayIconMngr::OnTrayEnv()
+{
+    MessageBox(_T("환경설정"));
+}
+
