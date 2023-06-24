@@ -1,4 +1,6 @@
 #pragma once
+#include "SDKCommon.h"
+
 class CTrayIconMngr : public CDialogEx
 {
 public:

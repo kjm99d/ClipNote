@@ -29,16 +29,16 @@ BOOL CTrayIconMngr::Create()
 
 BOOL CTrayIconMngr::Destroy()
 {
-    // íŠ¸ë ˆì´ ì•„ì´ì½˜ ì‚­ì œ
+    // Æ®·¹ÀÌ ¾ÆÀÌÄÜ »èÁ¦
     return Shell_NotifyIcon(NIM_DELETE, &m_nid);
 }
 
 LRESULT CTrayIconMngr::OnTrayIcon(WPARAM wParam, LPARAM lParam)
 {
-    // WM_TRAY_ICON ë©”ì‹œì§€ ì²˜ë¦¬
+    // WM_TRAY_ICON ¸Ş½ÃÁö Ã³¸®
     switch (lParam)
     {
-    case WM_RBUTTONDOWN: // ì˜¤ë¥¸ìª½ ë²„íŠ¼ í´ë¦­
+    case WM_RBUTTONDOWN: // ¿À¸¥ÂÊ ¹öÆ° Å¬¸¯
     {
         CPoint pt;
         GetCursorPos(&pt);
@@ -53,7 +53,7 @@ LRESULT CTrayIconMngr::OnTrayIcon(WPARAM wParam, LPARAM lParam)
     }
     break;
 
-    case WM_LBUTTONDBLCLK: // ì™¼ìª½ ë²„íŠ¼ ë”ë¸” í´ë¦­
+    case WM_LBUTTONDBLCLK: // ¿ŞÂÊ ¹öÆ° ´õºí Å¬¸¯
     {
         OutputDebugString(L"WM_LBUTTONDBLCLK \n");
         AfxGetMainWnd()->ShowWindow(SW_SHOW);
@@ -67,8 +67,8 @@ LRESULT CTrayIconMngr::OnTrayIcon(WPARAM wParam, LPARAM lParam)
         switch (LOWORD(wParam))
         {
         case ID_TRAY_EXIT:
-            // ì¢…ë£Œ ë²„íŠ¼ í´ë¦­ ì‹œ ì–´í”Œë¦¬ì¼€ì´ì…˜ ì¢…ë£Œ
-            if (MessageBox(_T("ì •ë§ ì¢…ë£Œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?"), _T("ì¢…ë£Œ"), MB_YESNO | MB_ICONQUESTION) == IDYES)
+            // Á¾·á ¹öÆ° Å¬¸¯ ½Ã ¾îÇÃ¸®ÄÉÀÌ¼Ç Á¾·á
+            if (MessageBox(_T("Á¤¸» Á¾·áÇÏ½Ã°Ú½À´Ï±î?"), _T("Á¾·á"), MB_YESNO | MB_ICONQUESTION) == IDYES)
             {
                 PostMessage(WM_CLOSE);
             }
@@ -89,7 +89,7 @@ LRESULT CTrayIconMngr::OnTrayIcon(WPARAM wParam, LPARAM lParam)
 
 void CTrayIconMngr::OnTrayExit()
 {
-    if (MessageBox(_T("ì •ë§ ì¢…ë£Œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?"), _T("ì¢…ë£Œ"), MB_YESNO | MB_ICONQUESTION) == IDYES)
+    if (MessageBox(_T("Á¤¸» Á¾·áÇÏ½Ã°Ú½À´Ï±î?"), _T("Á¾·á"), MB_YESNO | MB_ICONQUESTION) == IDYES)
     {
         PostMessage(WM_CLOSE);
     }
@@ -98,6 +98,7 @@ void CTrayIconMngr::OnTrayExit()
 
 void CTrayIconMngr::OnTrayEnv()
 {
-    MessageBox(_T("í™˜ê²½ì„¤ì •"));
+    const std::wstring strEnvPath = CSDKCommon::GetEnvToolPath();
+    MessageBox(strEnvPath.c_str());
 }
 

@@ -413,7 +413,7 @@ void CClipNoteDlg::OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult)
 			// 처리할 내용 작성
 			m_TextPreview.SetWindowTextW(strSelectedValue);
 
-			const int nSize = (strSelectedValue.GetLength() +1) * sizeof(WCHAR);
+			const int nSize = (strSelectedValue.GetLength() + 1) * sizeof(WCHAR);
 			HANDLE hMem = GlobalAlloc(GMEM_DDESHARE, nSize); // 설마 NULL도 2바이라고 이거 +1은 안되는거야 ?
 
 			WCHAR* p_clipboard_data = (WCHAR*)::GlobalLock(hMem);

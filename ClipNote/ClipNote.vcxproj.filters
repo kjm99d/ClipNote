@@ -19,6 +19,12 @@
     <Filter Include="소스 파일\lib\cpp-base64">
       <UniqueIdentifier>{bfc0d45b-f295-40d7-b9bb-8f135b8283e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Common">
+      <UniqueIdentifier>{f625b120-7262-41ba-a9d7-449a96bddc25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Common">
+      <UniqueIdentifier>{91930ad0-fd14-4e6a-b95a-bc284330d098}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClipNote.h">
@@ -48,6 +54,9 @@
     <ClInclude Include="WM_MSG_ID.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\SDKCommon.h">
+      <Filter>헤더 파일\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipNote.cpp">
@@ -67,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="TrayIconMngr.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\SDKCommon.cpp">
+      <Filter>소스 파일\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
