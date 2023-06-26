@@ -1,4 +1,4 @@
-﻿
+
 // ClipNoteEnvDlg.cpp: 구현 파일
 //
 
@@ -7,6 +7,8 @@
 #include "ClipNoteEnv.h"
 #include "ClipNoteEnvDlg.h"
 #include "afxdialogex.h"
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -54,6 +56,24 @@ CClipNoteEnvDlg::CClipNoteEnvDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CLIPNOTEENV_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Bandizip");
+	CRegReader RegReader;
+	if (TRUE == RegCtrl.Generate(RegReader))
+	{
+		int nValue = 0;
+		RegReader.Get(L"AutoReport", nValue);
+
+		std::wstring strValue;
+		RegReader.Get(L"Edition", strValue);
+
+
+		WCHAR szDbg[1024] = { 0, };
+		swprintf_s(szDbg, _countof(szDbg), L"%d", nValue);
+		MessageBox(szDbg);
+	}
+	
+
 }
 
 void CClipNoteEnvDlg::DoDataExchange(CDataExchange* pDX)
@@ -73,7 +93,6 @@ END_MESSAGE_MAP()
 BOOL CClipNoteEnvDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
 	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
 
 	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.

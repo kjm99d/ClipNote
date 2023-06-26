@@ -61,7 +61,6 @@ CClipNoteDlg::CClipNoteDlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	m_pTray = std::make_unique<CTrayIconMngr>(pParent);
-
 }
 
 void CClipNoteDlg::DoDataExchange(CDataExchange* pDX)

@@ -1,9 +1,9 @@
-﻿
+
 // ClipNoteEnvDlg.h: 헤더 파일
 //
 
 #pragma once
-
+#include "CRegCtrl.h"
 
 // CClipNoteEnvDlg 대화 상자
 class CClipNoteEnvDlg : public CDialogEx
