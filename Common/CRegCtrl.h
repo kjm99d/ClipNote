@@ -38,6 +38,21 @@ private:
 	HKEY m_hKey;
 };
 
+class CRegDeleter
+{
+public:
+	CRegDeleter();
+	~CRegDeleter();
+
+public:
+	void SetHandle(HKEY hKey);
+
+	BOOL Delete(std::wstring strValueName);
+
+private:
+	HKEY m_hKey;
+};
+
 class CRegCtrl
 {
 	CRegCtrl() = delete;
@@ -50,9 +65,11 @@ public:
 public:
 	BOOL Generate(CRegReader& inst);
 	BOOL Generate(CRegWriter& inst);
+	BOOL Generate(CRegDeleter& inst);
 
 private:
 	BOOL Open();	// CRegReader 용도
+	BOOL Open(REGSAM regsam);	// CRegReader, CRegDeleter 용도
 	BOOL Create();	// CRegWriter 용도
 	BOOL Close();
 	BOOL IsHandleAvailable();

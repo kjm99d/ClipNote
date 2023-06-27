@@ -37,10 +37,25 @@ BOOL CRegCtrl::Generate(CRegWriter& inst)
 	if (IsHandleAvailable())
 	{
 		if (Create())
+		{
+			inst.SetHandle(m_handle);
+			bResult = TRUE;
+		}
+	}
 
-		inst.SetHandle(m_handle);
+	return bResult;
+}
 
-		bResult = TRUE;
+BOOL CRegCtrl::Generate(CRegDeleter& inst)
+{
+	BOOL bResult = FALSE;
+	if (IsHandleAvailable())
+	{
+		if (Open(KEY_ALL_ACCESS))
+		{
+			inst.SetHandle(m_handle);
+			bResult = TRUE;
+		}
 	}
 
 	return bResult;
@@ -48,9 +63,14 @@ BOOL CRegCtrl::Generate(CRegWriter& inst)
 
 BOOL CRegCtrl::Open()
 {
+	return Open(KEY_QUERY_VALUE);
+}
+
+BOOL CRegCtrl::Open(REGSAM regsam)
+{
 	BOOL bResult = FALSE;
 
-	auto nResult = RegOpenKeyEx(m_hKey, m_strRegPath.c_str(), 0, KEY_QUERY_VALUE, &m_handle);
+	auto nResult = RegOpenKeyEx(m_hKey, m_strRegPath.c_str(), 0, regsam, &m_handle);
 
 	if (ERROR_SUCCESS == nResult)
 		bResult = TRUE;
@@ -150,7 +170,7 @@ void CRegWriter::SetHandle(HKEY hKey)
 
 BOOL CRegWriter::Set(std::wstring strValueName, int& nValue)
 {
-	auto nResult = RegSetValueEx(m_hKey, strValueName.c_str(), 0, REG_DWORD, 
+	auto nResult = RegSetValueEx(m_hKey, strValueName.c_str(), 0, RRF_RT_DWORD,
 		reinterpret_cast<LPBYTE>(&nValue), sizeof(nValue));
 
 
@@ -159,11 +179,36 @@ BOOL CRegWriter::Set(std::wstring strValueName, int& nValue)
 
 BOOL CRegWriter::Set(std::wstring strValueName, std::wstring& strValue)
 {
-	auto nResult = RegSetValueEx(m_hKey, strValueName.c_str(), 0, REG_DWORD, 
-		reinterpret_cast<LPBYTE>(strValue.data()), strValue.size());
+	auto nResult = RegSetValueEx(m_hKey, strValueName.c_str(), 0, RRF_RT_REG_SZ,
+		reinterpret_cast<LPBYTE>(strValue.data()), strValue.size() * sizeof(WCHAR));
 
 	return nResult == ERROR_SUCCESS;
 }
 
 
 // ========================================================================================== //
+
+CRegDeleter::CRegDeleter() : m_hKey(NULL)
+{
+}
+
+CRegDeleter::~CRegDeleter()
+{
+}
+
+void CRegDeleter::SetHandle(HKEY hKey)
+{
+	m_hKey = hKey;
+}
+
+BOOL CRegDeleter::Delete(std::wstring strValueName)
+{
+	BOOL bResult = FALSE;
+	LONG lResult = RegDeleteValue(m_hKey, strValueName.c_str());
+
+	if (lResult == ERROR_SUCCESS)
+		bResult = TRUE;
+
+	return bResult;
+
+}

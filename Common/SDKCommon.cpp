@@ -1,4 +1,5 @@
 #include "SDKCommon.h"
+#include "CRegCtrl.h"
 
 /**
  * \brief 프로그램이 설치된 위치를 구한다..
@@ -32,6 +33,19 @@ std::wstring CSDKCommon::GetEnvToolPath()
 	strModulePath += L"ClipNoteEnv.exe";
 
 	return strModulePath;
+}
+
+std::wstring CSDKCommon::GetClipNotePath()
+{
+    std::wstring strModulePath = GetModulePath();
+
+    WCHAR lastChar = strModulePath.back();
+    if (L'\\' != lastChar)
+        strModulePath += L'\\';
+
+    strModulePath += L"ClipNote.exe";
+
+    return strModulePath;
 }
 
 /**
@@ -71,4 +85,46 @@ BOOL CSDKCommon::RunProgram(std::wstring strPath, std::wstring strArgumnets, BOO
     // 핸들 해제
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
+}
+
+BOOL CSDKCommon::AddStartProgram(std::wstring strName, std::wstring strFilePath)
+{
+    CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+
+    CRegWriter RegWriter;
+    if (TRUE == RegCtrl.Generate(RegWriter) && TRUE == RegWriter.Set(strName, strFilePath))
+    {
+        return TRUE;
+    }
+
+
+    return FALSE;
+}
+
+BOOL CSDKCommon::DelStartProgram(std::wstring strName)
+{
+    CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+
+    CRegDeleter RegDeleter;
+    if (TRUE == RegCtrl.Generate(RegDeleter) && TRUE == RegDeleter.Delete(strName))
+    {
+        return TRUE;
+    }
+
+
+    return FALSE;
+}
+
+BOOL CSDKCommon::IsExistsStartProgram(std::wstring strName, std::wstring& strFilePath)
+{
+    CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+
+    CRegReader RegReader;
+    std::wstring strValue;
+    if (TRUE == RegCtrl.Generate(RegReader) && TRUE == RegReader.Get(strName, strValue))
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }

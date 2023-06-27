@@ -7,7 +7,7 @@
 #include "ClipNoteEnv.h"
 #include "ClipNoteEnvDlg.h"
 #include "afxdialogex.h"
-
+#include "SDKCommon.h"
 
 
 #ifdef _DEBUG
@@ -56,24 +56,6 @@ CClipNoteEnvDlg::CClipNoteEnvDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CLIPNOTEENV_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-
-	CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Bandizip");
-	CRegReader RegReader;
-	if (TRUE == RegCtrl.Generate(RegReader))
-	{
-		int nValue = 0;
-		RegReader.Get(L"AutoReport", nValue);
-
-		std::wstring strValue;
-		RegReader.Get(L"Edition", strValue);
-
-
-		WCHAR szDbg[1024] = { 0, };
-		swprintf_s(szDbg, _countof(szDbg), L"%d", nValue);
-		MessageBox(szDbg);
-	}
-	
-
 }
 
 void CClipNoteEnvDlg::DoDataExchange(CDataExchange* pDX)
@@ -85,6 +67,7 @@ BEGIN_MESSAGE_MAP(CClipNoteEnvDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDOK, &CClipNoteEnvDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -119,6 +102,12 @@ BOOL CClipNoteEnvDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	std::wstring strFilePath = L"";
+	if (TRUE == CSDKCommon::IsExistsStartProgram(STR_STARTPROGRAM_NAME, strFilePath))
+	{
+		CButton* pCheckBtn = (CButton*)GetDlgItem(IDC_CHECK1);
+		pCheckBtn->SetCheck(BST_CHECKED);
+	}
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -172,3 +161,23 @@ HCURSOR CClipNoteEnvDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CClipNoteEnvDlg::OnBnClickedOk()
+{
+	// 시작 프로그램 등록 로직
+	CButton* pBtnWinStartup = (CButton*)GetDlgItem(IDC_CHECK1);
+	switch (pBtnWinStartup->GetCheck())
+	{
+	case BST_CHECKED:
+		CSDKCommon::AddStartProgram(STR_STARTPROGRAM_NAME, CSDKCommon::GetClipNotePath());
+		break;
+	case BST_UNCHECKED:
+		if (TRUE == CSDKCommon::IsExistsStartProgram(STR_STARTPROGRAM_NAME, CSDKCommon::GetClipNotePath()))
+			CSDKCommon::DelStartProgram(STR_STARTPROGRAM_NAME);
+		break;
+	}
+
+
+	CDialogEx::OnOK();
+}

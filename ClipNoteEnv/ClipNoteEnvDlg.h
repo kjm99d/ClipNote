@@ -5,6 +5,8 @@
 #pragma once
 #include "CRegCtrl.h"
 
+constexpr const WCHAR * STR_STARTPROGRAM_NAME = L"ClipNote";
+
 // CClipNoteEnvDlg 대화 상자
 class CClipNoteEnvDlg : public CDialogEx
 {
@@ -31,4 +33,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedOk();
 };
