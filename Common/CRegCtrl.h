@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 
+
 class CRegReader;
 class CRegWriter;
 class CRegCtrl;

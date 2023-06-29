@@ -17,6 +17,7 @@ public:
 
 private:
 	void SetUI();
+	BOOL IsUserSetMostTopIsDisabled();
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
