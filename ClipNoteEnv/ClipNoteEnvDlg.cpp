@@ -68,6 +68,28 @@ void CClipNoteEnvDlg::SetUI()
 		pCheckBtn->SetCheck(BST_CHECKED);
 	}
 
+	CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ClipNote");
+	CRegReader RegReader;
+	if (TRUE == RegCtrl.Generate(RegReader))
+	{
+		int nValue = 0;
+		RegReader.Get(L"MostTop", nValue);
+
+		if (0 == nValue)
+		{
+			SetButtonDisable(IDC_TOP_KEY_CTRL);
+			SetButtonDisable(IDC_TOP_KEY_ALT);
+			SetButtonDisable(IDC_TOP_KEY_WIN);
+		}
+
+		std::wstring strValue;
+		RegReader.Get(L"MostTop_SubKey", strValue);
+
+		CComboBox* pCbBox = static_cast<CComboBox*>(GetDlgItem(IDC_COMBO_SUBKEY));
+		if (pCbBox)
+			pCbBox->SetWindowTextW(strValue.c_str());
+		
+	}
 
 	
 }
@@ -88,6 +110,13 @@ BOOL CClipNoteEnvDlg::IsUserSetMostTopIsDisabled()
 	}
 
 	return bResult;
+}
+
+void CClipNoteEnvDlg::SetButtonDisable(int nId)
+{
+	CButton* pButton = static_cast<CButton *>(GetDlgItem(nId));
+	if (pButton)
+		pButton->EnableWindow(FALSE);
 }
 
 void CClipNoteEnvDlg::DoDataExchange(CDataExchange* pDX)
