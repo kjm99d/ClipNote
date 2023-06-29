@@ -14,6 +14,10 @@ class CClipNoteEnvDlg : public CDialogEx
 public:
 	CClipNoteEnvDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
 
+
+private:
+	void SetUI();
+
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CLIPNOTEENV_DIALOG };

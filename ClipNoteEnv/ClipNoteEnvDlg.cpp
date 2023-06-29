@@ -58,6 +58,39 @@ CClipNoteEnvDlg::CClipNoteEnvDlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+void CClipNoteEnvDlg::SetUI()
+{
+	// 윈도우 시작 시 자동실행 기능
+	std::wstring strFilePath = L"";	// << 시작프로그램으로 등록된 경로
+	if (TRUE == CSDKCommon::IsExistsStartProgram(STR_STARTPROGRAM_NAME, strFilePath))
+	{
+		CButton* pCheckBtn = (CButton*)GetDlgItem(IDC_CHECK1);
+		pCheckBtn->SetCheck(BST_CHECKED);
+	}
+
+
+	// 최상위 단축키
+	CButton* pChkBtnTopCtrl = (CButton*)GetDlgItem(IDC_TOP_KEY_CTRL);
+	CButton* pChkBtnTopAlt = (CButton*)GetDlgItem(IDC_TOP_KEY_ALT);
+	CButton* pChkBtnTopWin = (CButton*)GetDlgItem(IDC_TOP_KEY_WIN);
+	CComboBox * pCbBox = (CComboBox *)GetDlgItem(IDC_COMBO_SUBKEY);
+
+	if (pChkBtnTopCtrl && pChkBtnTopAlt && pChkBtnTopWin && pCbBox)
+	{
+		// 레지스트리 정보를 가져온다.
+		// 레지스트리 내부에 위 핫키 정보가 저장되어 있는지 확인하고,
+		// 저장되어 있다면 상태를 UI에 표시한다.
+
+
+		CString strComboBoxText;
+		pCbBox->GetWindowTextW(strComboBoxText);
+		if (0 == strComboBoxText.CompareNoCase(L"없음"))
+		{
+
+		}
+	}
+}
+
 void CClipNoteEnvDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
@@ -102,12 +135,7 @@ BOOL CClipNoteEnvDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	std::wstring strFilePath = L"";
-	if (TRUE == CSDKCommon::IsExistsStartProgram(STR_STARTPROGRAM_NAME, strFilePath))
-	{
-		CButton* pCheckBtn = (CButton*)GetDlgItem(IDC_CHECK1);
-		pCheckBtn->SetCheck(BST_CHECKED);
-	}
+	SetUI();
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
