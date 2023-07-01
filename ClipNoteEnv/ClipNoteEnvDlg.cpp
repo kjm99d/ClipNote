@@ -81,6 +81,22 @@ void CClipNoteEnvDlg::SetUI()
 			SetButtonDisable(IDC_TOP_KEY_ALT);
 			SetButtonDisable(IDC_TOP_KEY_WIN);
 		}
+		else
+		{
+			int nValue = 0;
+
+			RegReader.Get(L"MostTop_ALT", nValue);
+			if (nValue == 1)
+				static_cast<CButton*>(GetDlgItem(IDC_TOP_KEY_ALT))->SetCheck(BTNS_CHECK);
+
+			RegReader.Get(L"MostTop_CTRL", nValue);
+			if (nValue == 1)
+				static_cast<CButton*>(GetDlgItem(IDC_TOP_KEY_CTRL))->SetCheck(BTNS_CHECK);
+
+			RegReader.Get(L"MostTop_WIN", nValue);
+			if (nValue == 1)
+				static_cast<CButton*>(GetDlgItem(IDC_TOP_KEY_WIN))->SetCheck(BTNS_CHECK);
+		}
 
 		std::wstring strValue;
 		RegReader.Get(L"MostTop_SubKey", strValue);
