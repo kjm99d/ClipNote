@@ -57,6 +57,9 @@
     <ClInclude Include="..\Common\SDKCommon.h">
       <Filter>헤더 파일\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\CRegCtrl.h">
+      <Filter>헤더 파일\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipNote.cpp">

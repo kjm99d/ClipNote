@@ -237,8 +237,6 @@ HCURSOR CClipNoteEnvDlg::OnQueryDragIcon()
 
 void CClipNoteEnvDlg::OnBnClickedOk()
 {
-	MessageBox(0);
-
 	// 시작 프로그램 등록 로직
 	CButton* pBtnWinStartup = (CButton*)GetDlgItem(IDC_CHECK1);
 	switch (pBtnWinStartup->GetCheck())

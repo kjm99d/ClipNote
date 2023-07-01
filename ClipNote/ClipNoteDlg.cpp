@@ -11,6 +11,7 @@
 #include "HistoryManager.h"
 #include "TrayIconMngr.h"
 #include "WM_MSG_ID.h"
+#include "CRegCtrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -115,17 +116,37 @@ LRESULT CClipNoteDlg::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 		if (wParam == WM_KEYDOWN)
 		{
-			bool alt = HIWORD(GetKeyState(VK_MENU)) != 0;
-			bool control = HIWORD(GetKeyState(VK_CONTROL)) != 0;
-			bool shift = HIWORD(GetKeyState(VK_SHIFT)) != 0;
-			bool system = HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
+			bool bClickShift = HIWORD(GetKeyState(VK_SHIFT)) != 0;
+			bool bClickAlt = HIWORD(GetKeyState(VK_MENU)) != 0;
+			bool bClickCtrl = HIWORD(GetKeyState(VK_CONTROL)) != 0;
+			bool bClickWin = HIWORD(GetKeyState(VK_LWIN)) || HIWORD(GetKeyState(VK_RWIN));
 
-			// WM_KEYDOWN 이벤트인 경우
-			DWORD vkCode = pKeyboardStruct->vkCode;
-			std::string ss = "Key down: ";
-			if (shift && vkCode == 'T')
+
+			CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ClipNote");
+			CRegReader RegReader;
+			if (TRUE == RegCtrl.Generate(RegReader))
 			{
-				::SetForegroundWindow(AfxGetMainWnd()->GetSafeHwnd());
+				int nValueAlt = 0;
+				RegReader.Get(L"MostTop_ALT", nValueAlt);
+
+				int nValueCtrl = 0;
+				RegReader.Get(L"MostTop_CTRL", nValueCtrl);
+
+				int nValueWin = 0;
+				RegReader.Get(L"MostTop_WIN", nValueWin);
+
+				std::wstring strSubKey = L"";
+				RegReader.Get(L"MostTop_SubKey", strSubKey);
+				
+				// WM_KEYDOWN 이벤트인 경우
+				DWORD vkCode = pKeyboardStruct->vkCode;
+				if (bClickAlt == nValueAlt &&
+					bClickCtrl == nValueCtrl &&
+					bClickWin == nValueWin &&
+					vkCode == strSubKey[0])
+				{
+					::SetForegroundWindow(AfxGetMainWnd()->GetSafeHwnd());
+				}
 			}
 		}
 	}
