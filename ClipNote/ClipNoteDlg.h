@@ -39,6 +39,7 @@ private:
 private:
 	CListCtrl m_listCtrl;
 	void SetupListCtrl();
+	BOOL UseClickCopy();
 
 // 구현입니다.
 protected:

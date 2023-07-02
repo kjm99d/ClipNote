@@ -62,7 +62,6 @@ CClipNoteDlg::CClipNoteDlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	m_pTray = std::make_unique<CTrayIconMngr>(pParent);
-
 	
 }
 
@@ -199,6 +198,23 @@ void CClipNoteDlg::SetupListCtrl()
 	//m_listCtrl.Create(WS_VISIBLE | WS_CHILD | LVS_REPORT, CRect(10, 10, 300, 200), this, IDC_LIST1);
 	m_listCtrl.InsertColumn(0, _T("Column 1"), LVCFMT_LEFT, 100);
 	m_listCtrl.InsertColumn(1, _T("Column 2"), LVCFMT_LEFT, 100);
+}
+
+BOOL CClipNoteDlg::UseClickCopy()
+{
+	BOOL bResult = FALSE;
+	CRegCtrl RegCtrl(HKEY_LOCAL_MACHINE, L"SOFTWARE\\ClipNote");
+	CRegReader RegReader;
+	if (TRUE == RegCtrl.Generate(RegReader))
+	{
+		int nValue = 0;
+		RegReader.Get(L"ClickCopy", nValue);
+
+		if (1 == nValue)
+			bResult = TRUE;
+	}
+
+	return bResult;
 }
 
 BOOL CClipNoteDlg::OnInitDialog()
@@ -420,41 +436,46 @@ void CClipNoteDlg::OnLvnItemchangedList1(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	// 선택한 항목의 상태가 변경된 경우
-	if ((pNMLV->uChanged & LVIF_STATE) && (pNMLV->uNewState & LVIS_SELECTED))
+	if (TRUE == UseClickCopy())
 	{
-		// 현재 선택된 항목을 가져옴
-		int nItem = pNMLV->iItem;
 
-		// 선택된 항목의 값이 변경된 경우
-		if ((pNMLV->uOldState & LVIS_SELECTED) != (pNMLV->uNewState & LVIS_SELECTED))
+		// 선택한 항목의 상태가 변경된 경우
+		if ((pNMLV->uChanged & LVIF_STATE) && (pNMLV->uNewState & LVIS_SELECTED))
 		{
-			// 선택된 항목의 값을 가져옴
-			CString strSelectedValue = m_listCtrl.GetItemText(nItem, 0);
+			// 현재 선택된 항목을 가져옴
+			int nItem = pNMLV->iItem;
 
-			// 처리할 내용 작성
-			m_TextPreview.SetWindowTextW(strSelectedValue);
-
-			const int nSize = (strSelectedValue.GetLength() + 1) * sizeof(WCHAR);
-			HANDLE hMem = GlobalAlloc(GMEM_DDESHARE, nSize); // 설마 NULL도 2바이라고 이거 +1은 안되는거야 ?
-
-			WCHAR* p_clipboard_data = (WCHAR*)::GlobalLock(hMem);
-
-			memcpy_s(p_clipboard_data, nSize, strSelectedValue.GetBuffer(), nSize);
-			::GlobalUnlock(p_clipboard_data);
-
-			if (TRUE == OpenClipboard())
+			// 선택된 항목의 값이 변경된 경우
+			if ((pNMLV->uOldState & LVIS_SELECTED) != (pNMLV->uNewState & LVIS_SELECTED))
 			{
-				EmptyClipboard();
-				HANDLE hClip = SetClipboardData(CF_UNICODETEXT, hMem);
-				if (hClip)
-					OutputDebugString(L"Success ! \n");
+				// 선택된 항목의 값을 가져옴
+				CString strSelectedValue = m_listCtrl.GetItemText(nItem, 0);
 
-				CloseClipboard();
+				// 처리할 내용 작성
+				m_TextPreview.SetWindowTextW(strSelectedValue);
+
+				const int nSize = (strSelectedValue.GetLength() + 1) * sizeof(WCHAR);
+				HANDLE hMem = GlobalAlloc(GMEM_DDESHARE, nSize); // 설마 NULL도 2바이라고 이거 +1은 안되는거야 ?
+
+				WCHAR* p_clipboard_data = (WCHAR*)::GlobalLock(hMem);
+
+				memcpy_s(p_clipboard_data, nSize, strSelectedValue.GetBuffer(), nSize);
+				::GlobalUnlock(p_clipboard_data);
+
+				if (TRUE == OpenClipboard())
+				{
+					EmptyClipboard();
+					HANDLE hClip = SetClipboardData(CF_UNICODETEXT, hMem);
+					if (hClip)
+						OutputDebugString(L"Success ! \n");
+
+					CloseClipboard();
+				}
+
+				//GlobalFree(hMem);
 			}
-
-			//GlobalFree(hMem);
 		}
+
 	}
 
 	*pResult = 0;
