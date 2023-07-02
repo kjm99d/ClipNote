@@ -104,6 +104,13 @@ void CClipNoteEnvDlg::SetUI()
 		CComboBox* pCbBox = static_cast<CComboBox*>(GetDlgItem(IDC_COMBO_SUBKEY));
 		if (pCbBox)
 			pCbBox->SetWindowTextW(strValue.c_str());
+
+		RegReader.Get(L"ClickCopy", nValue);
+		if (1 == nValue)
+		{
+			static_cast<CButton*>(GetDlgItem(IDC_CLICK_COPY))->SetCheck(BTNS_CHECK);
+		}
+
 		
 	}
 
@@ -293,6 +300,13 @@ void CClipNoteEnvDlg::OnBnClickedOk()
 			pCbBox->GetWindowText(strValue);
 			RegWriter.Set(L"MostTop_SubKey", std::wstring(strValue));
 
+		}
+
+		CButton* pChkBtnClickCopy = (CButton*)GetDlgItem(IDC_CLICK_COPY);
+		if (pChkBtnClickCopy)
+		{
+			int nValue = pChkBtnClickCopy->GetCheck();
+			RegWriter.Set(L"ClickCopy", nValue);
 		}
 	}
 

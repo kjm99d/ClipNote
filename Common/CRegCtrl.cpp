@@ -123,9 +123,11 @@ void CRegReader::SetHandle(HKEY hKey)
 
 BOOL CRegReader::Get(std::wstring strValueName, int& nValue)
 {
+	nValue = 0;
+
 	BOOL bResult = FALSE;
 	DWORD dwBufferSize = sizeof(nValue);
-	 auto nResult = RegGetValue(m_hKey, nullptr, strValueName.c_str(), RRF_RT_DWORD, nullptr, (PVOID)&nValue, &dwBufferSize);
+	 auto nResult = RegGetValue(m_hKey, nullptr, strValueName.c_str(), RRF_RT_ANY, nullptr, (PVOID)&nValue, &dwBufferSize);
 
 	 if (ERROR_SUCCESS == nResult)
 		 bResult = TRUE;
@@ -170,7 +172,7 @@ void CRegWriter::SetHandle(HKEY hKey)
 
 BOOL CRegWriter::Set(std::wstring strValueName, int& nValue)
 {
-	auto nResult = RegSetValueEx(m_hKey, strValueName.c_str(), 0, RRF_RT_DWORD,
+	auto nResult = RegSetValueEx(m_hKey, strValueName.c_str(), 0, RRF_RT_ANY,
 		reinterpret_cast<LPBYTE>(&nValue), sizeof(nValue));
 
 

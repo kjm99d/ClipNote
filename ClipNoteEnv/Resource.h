@@ -10,6 +10,7 @@
 #define IDC_BUTTON1                     1000
 #define IDC_CHECK1                      1001
 #define IDC_CHECK2                      1002
+#define IDC_CLICK_COPY                  1002
 #define IDC_TOP_KEY_CTRL                1004
 #define IDC_TOP_KEY_ALT                 1005
 #define IDC_TOP_KEY_WIN                 1006
